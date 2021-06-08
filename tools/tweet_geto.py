@@ -28,7 +28,10 @@ def get_recent_search_pager(
     hydrate_type: HydrateType = HydrateType.APPEND
 ) -> TwitterPager:
     # When auth_filepath is None, it looks for a credentials.txt in the dir of the current file
-    auth = TwitterOAuth(auth_filepath.resolve() if auth_filepath.is_file else None)
+    if auth_filepath is not None and auth_filepath.is_file:
+        auth = TwitterOAuth.read_file(auth_filepath.resolve())
+    else:
+        auth = TwitterOAuth.read_file()
     api = TwitterAPI(auth.consumer_key, auth.consumer_secret, auth_type=OAuthType.OAUTH2, api_version='2')
 
     api_request = dict(**fields, **{"query": query})
@@ -68,6 +71,7 @@ def append_pager_content_to_json(
     for result in pager.get_iterator():
         current_results.append(result)
 
+    # FIXME: doesn't work since dicts are in JSONs and are unhashable
     if remove_dups:
         list(set(current_results))
 

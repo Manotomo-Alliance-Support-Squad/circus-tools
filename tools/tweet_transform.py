@@ -1,6 +1,7 @@
 """Tools to translate tweet JSONs to other data formats.
 """
 
+from copy import deepcopy
 import csv
 import json
 from pathlib import Path
@@ -63,7 +64,8 @@ def build_tweet_context(tweet: Dict) -> Dict:
 
 
 def transform_tweet_json_to_csv(
-    json_filepath: Path, unique_header: str, header_map: Dict = HEADER_MAP, csv_filepath: Path = None
+    json_filepath: Path, focus_entry: str, header_map: Dict = HEADER_MAP, csv_filepath: Path = None,
+    write_focus_entry: bool = False, write_non_focus_entry: bool = False
 ):
     with open(json_filepath, 'r') as fp:
         tweets = json.load(fp)
@@ -73,12 +75,27 @@ def transform_tweet_json_to_csv(
 
     tweet_contexts = map(build_tweet_context, tweets)
     with open(csv_filepath, 'w') as fp:
-        csv.DictWriter(fp, fieldnames=list(header_map.keys()))
+        csv_dict_writer = csv.DictWriter(fp, fieldnames=list(header_map.keys()))
+        csv_dict_writer.writeheader()
         for tweet_context in tweet_contexts:
-            unique_value = header_map[unique_header](tweet_context)
-            if unique_value is not None and unique_value.__iter__:
-                # Is an iterable, need to loop
-                pass
-            else:
-                # No media, just display some message and we're done
-                pass
+            focus_entry_values = header_map[focus_entry](tweet_context)
+            entry_dict = deepcopy(header_map)
+            for key in header_map.keys():
+                entry_dict[key] = header_map[key](tweet_context)
+
+            # write tweets with artlink
+            if focus_entry_values is not None and write_focus_entry:
+                for value in focus_entry_values:
+                    # Hardcording to make this work
+                    if 'url' in value:
+                        entry_dict[focus_entry] = value['url']
+                    elif 'preview_image_url' in value:
+                        entry_dict[focus_entry] = value['preview_image_url']
+                    else:
+                        # Purposefully do this so we can catch it at loading time
+                        entry_dict[focus_entry] = None
+                    csv_dict_writer.writerow(entry_dict)
+            # write tweets without artlinks
+            if focus_entry_values is None and write_non_focus_entry:
+                entry_dict[focus_entry] = None
+                csv_dict_writer.writerow(entry_dict)

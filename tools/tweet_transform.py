@@ -151,7 +151,7 @@ def transform_tweet_json_to_csv(
         csv_dict_writer.writeheader()
 
         for tweet_context in tweet_contexts:
-            # FIXME: THis has a bug where before we'd get non for focus entry, but with getattr, this just tries to get the prop
+
             focus_entry_values = getattr(tweet_context, focus_entry)
             entry_dict = deepcopy(header_map)
             for key in header_map.keys():
@@ -160,14 +160,7 @@ def transform_tweet_json_to_csv(
             # write tweets with artlink
             if focus_entry_values is not None and write_focus_entry:
                 for value in focus_entry_values:
-                    # Hardcording to make this work
-                    if 'url' in value:
-                        entry_dict[focus_entry] = value['url']
-                    elif 'preview_image_url' in value:
-                        entry_dict[focus_entry] = value['preview_image_url']
-                    else:
-                        # Purposefully do this so we can catch it at loading time
-                        entry_dict[focus_entry] = None
+                    entry_dict[focus_entry] = value
                     csv_dict_writer.writerow(entry_dict)
             # write tweets without artlinks
             if focus_entry_values is None and write_non_focus_entry:

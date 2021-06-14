@@ -21,34 +21,13 @@ TWEET_CONTEXT_MAPPING = {
 }
 
 
-def _get_username(context: Dict):
-    return context.get("display_name")
-
-
-def _get_artworkLink(context: Dict):
-    return context.get("medias")
-
-
-def _get_setID(context: Dict):
-    return context.get("tweet_id")
-
-
-def _get_message(context: Dict):
-    return context.get("text")
-
-
-def _get_artistLink(context: Dict):
-    return f"https://twitter.com/{context.get('username')}/status/{context.get('tweet_id')}"
-
-
 HEADER_MAP = {
-    "username": _get_username,
+    "username": "",
     # link to tweet
-    "artistLink": _get_artistLink,
-    # Main iterator
-    "artworkLink": _get_artworkLink,
-    "setID": _get_setID,
-    "message": _get_message,
+    "artistLink": "",
+    "artworkLink": "",
+    "setID": "",
+    "message": "",
 }
 
 

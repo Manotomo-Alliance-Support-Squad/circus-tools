@@ -4,8 +4,12 @@
 from copy import deepcopy
 import csv
 import json
+import logging
 from pathlib import Path
-from typing import Dict
+from pprint import pformat
+from typing import Dict, List
+
+LOGGER = logging.getLogger(__name__)
 
 TWEET_CONTEXT_MAPPING = {
     "username": ["author_id_hydrate", "username"],
@@ -13,6 +17,7 @@ TWEET_CONTEXT_MAPPING = {
     "text": ["text"],
     "medias": ["attachments", "media_keys_hydrate"],
     "tweet_id": ["id"],
+    "datetime": ["created_at"]
 }
 
 
@@ -146,10 +151,11 @@ def transform_tweet_json_to_csv(
         csv_dict_writer.writeheader()
 
         for tweet_context in tweet_contexts:
-            focus_entry_values = header_map[focus_entry](tweet_context)
+            # FIXME: THis has a bug where before we'd get non for focus entry, but with getattr, this just tries to get the prop
+            focus_entry_values = getattr(tweet_context, focus_entry)
             entry_dict = deepcopy(header_map)
             for key in header_map.keys():
-                entry_dict[key] = header_map[key](tweet_context)
+                entry_dict[key] = getattr(tweet_context, key)
 
             # write tweets with artlink
             if focus_entry_values is not None and write_focus_entry:

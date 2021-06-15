@@ -57,7 +57,7 @@ class TweetContext(object):
     def get_tweet_url(self) -> str:
         return f"https://twitter.com/{self.context.get('username')}/status/{self.context.get('tweet_id')}"
 
-    # Manotomo-vocab getters
+    # Manotomo-vocab getters, matches db column names
     @property
     def username(self) -> str:
         return self.get_tweet_name()

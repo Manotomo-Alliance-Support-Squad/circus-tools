@@ -20,10 +20,8 @@ TWEET_CONTEXT_MAPPING = {
     "datetime": ["created_at"]
 }
 
-
 HEADER_MAP = {
     "username": "",
-    # link to tweet
     "artistLink": "",
     "artworkLink": "",
     "setID": "",

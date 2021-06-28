@@ -21,18 +21,23 @@ aqua_query = {
 }
 
 
+def get_api_obj_with_auth(auth_filepath: Path = None):
+    # When auth_filepath is None, it looks for a credentials.txt in the dir of the current file
+    if auth_filepath is not None and auth_filepath.is_file:
+        auth = TwitterOAuth.read_file(auth_filepath.resolve())
+    else:
+        auth = TwitterOAuth.read_file()
+
+    return TwitterAPI(auth.consumer_key, auth.consumer_secret, auth_type=OAuthType.OAUTH2, api_version='2')
+
+
 def get_recent_search_pager(
     query: str,
     fields: Dict,
     auth_filepath: Path = None,
     hydrate_type: HydrateType = HydrateType.APPEND
 ) -> TwitterPager:
-    # When auth_filepath is None, it looks for a credentials.txt in the dir of the current file
-    if auth_filepath is not None and auth_filepath.is_file:
-        auth = TwitterOAuth.read_file(auth_filepath.resolve())
-    else:
-        auth = TwitterOAuth.read_file()
-    api = TwitterAPI(auth.consumer_key, auth.consumer_secret, auth_type=OAuthType.OAUTH2, api_version='2')
+    api = get_api_obj_with_auth(auth_filepath)
 
     api_request = dict(**fields, **{"query": query})
     return TwitterPager(

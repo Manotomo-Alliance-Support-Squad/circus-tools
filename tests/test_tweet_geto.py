@@ -1,12 +1,38 @@
 from unittest.mock import MagicMock, patch
 
+from tools import tweet_geto
+
+
+class TestGetApiObjWithAuth:
+
+    @patch("tools.tweet_geto.TwitterOAuth")
+    @patch("tools.tweet_geto.TwitterAPI")
+    def test_auth_user_path(self, mock_api, mock_oauth):
+        pass
+
+    @patch("tools.tweet_geto.TwitterOAuth")
+    @patch("tools.tweet_geto.TwitterAPI")
+    def test_auth_default_path(self, mock_api, mock_oauth):
+        tweet_geto.get_api_obj_with_auth()
+
 
 # TODO: Patch TwitterPager to figure out if query is sent as we expect
 # TODO: Patch TwitterOAuth to figure out if filepath is dealt with the correct way
 # TODO: Patch TwitterAPI to figure out if the right auth informaion is pass through
-def test_get_recent_search_pager():
-    pass
+class TestRecentSearchPager:
+
+    def test_falsey_fields():
+        pass
+
+    def test_truthy_fields():
+        pass
+
+    def test_falsey_query():
+        pass
+
+    def test_truthy_query():
+        pass
 
 
-def dump_pager_content_to_json():
+def test_dump_pager_content_to_json():
     pass

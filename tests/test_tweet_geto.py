@@ -1,3 +1,5 @@
+from pathlib import Path
+from tempfile import NamedTemporaryFile
 from unittest.mock import MagicMock, patch
 
 from tools import tweet_geto
@@ -8,7 +10,8 @@ class TestGetApiObjWithAuth:
     @patch("tools.tweet_geto.TwitterOAuth")
     @patch("tools.tweet_geto.TwitterAPI")
     def test_auth_user_path(self, mock_api, mock_oauth):
-        pass
+        tmp_file = NamedTemporaryFile()
+        tweet_geto.get_api_obj_with_auth(Path(tmp_file.name))
 
     @patch("tools.tweet_geto.TwitterOAuth")
     @patch("tools.tweet_geto.TwitterAPI")

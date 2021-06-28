@@ -23,7 +23,7 @@ aqua_query = {
 
 def get_api_obj_with_auth(auth_filepath: Path = None):
     # When auth_filepath is None, it looks for a credentials.txt in the dir of the current file
-    if auth_filepath is not None and auth_filepath.is_file:
+    if auth_filepath is not None and auth_filepath.is_file():
         auth = TwitterOAuth.read_file(auth_filepath.resolve())
     else:
         auth = TwitterOAuth.read_file()

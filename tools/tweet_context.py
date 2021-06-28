@@ -1,4 +1,4 @@
-"""Class to expose tweet metadata without traversals on the user's part
+"""Exposes tweet metadata without traversals the user needing to understand the twitter data model
 """
 
 import logging

@@ -53,6 +53,7 @@ def dump_pager_content_to_json(pager: TwitterPager, filepath: Path):
         json.dump(all_pager_results, fp)
 
 
+# FIXME: This doesn't work as intended
 def append_pager_content_to_json(
     pager: TwitterPager, filepath: Path, remove_dups: bool = False, no_bak_file: bool = False
 ):

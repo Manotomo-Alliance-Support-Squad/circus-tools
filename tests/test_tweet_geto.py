@@ -2,6 +2,8 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from tools import tweet_geto
 
 
@@ -9,22 +11,27 @@ class TestGetApiObjWithAuth:
 
     @patch("tools.tweet_geto.TwitterOAuth")
     @patch("tools.tweet_geto.TwitterAPI")
-    def test_auth_user_path(self, mock_api, mock_oauth):
-        tmp_file = NamedTemporaryFile()
-        tmp_filepath = Path(tmp_file.name)
-        tweet_geto.get_api_obj_with_auth(Path(tmp_file.name))
-        mock_oauth.read_file.assert_called_with(tmp_filepath.resolve())
-
-    @patch("tools.tweet_geto.TwitterOAuth")
-    @patch("tools.tweet_geto.TwitterAPI")
     def test_auth_default_path(self, mock_api, mock_oauth):
         tweet_geto.get_api_obj_with_auth()
+
         mock_oauth.read_file.assert_called_with()
 
     @patch("tools.tweet_geto.TwitterOAuth")
     @patch("tools.tweet_geto.TwitterAPI")
-    def test_auth_user_path_not_file(self, mock_api, mock_oauth):
-        tweet_geto.get_api_obj_with_auth(Path("asdf"))
+    def test_auth_user_path(self, mock_api, mock_oauth):
+        tmp_file = NamedTemporaryFile()
+        tmp_filepath = Path(tmp_file.name)
+
+        tweet_geto.get_api_obj_with_auth(Path(tmp_file.name))
+
+        mock_oauth.read_file.assert_called_with(tmp_filepath.resolve())
+
+    @patch("tools.tweet_geto.TwitterOAuth")
+    @patch("tools.tweet_geto.TwitterAPI")
+    @pytest.mark.parametrize("test_path", [Path("not_file"), None])
+    def test_auth_falsey_user_path(self, mock_api, mock_oauth, test_path):
+        tweet_geto.get_api_obj_with_auth(test_path)
+
         mock_oauth.read_file.assert_called_with()
 
 

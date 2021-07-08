@@ -1,7 +1,7 @@
 from copy import deepcopy
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 from TwitterAPI import HydrateType
@@ -60,9 +60,9 @@ class TestRecentSearchPager:
     @patch('tools.tweet_geto.get_api_obj_with_auth')
     def test_auth_filepath(self, mock_get_api, mock_pager):
         """Tests non-default auth_filepath"""
-        tweet_geto.get_recent_search_pager(query='', fields={}, auth_filepath=Path('asdf'))
+        tweet_geto.get_recent_search_pager(query='', fields={}, auth_filepath=Path('inapath'))
 
-        mock_get_api.assert_called_with(Path('asdf'))
+        mock_get_api.assert_called_with(Path('inapath'))
 
     @patch('tools.tweet_geto.TwitterPager')
     @patch('tools.tweet_geto.get_api_obj_with_auth')
@@ -127,4 +127,5 @@ class TestRecentSearchPager:
 class TestDumpPagerContentToJson:
 
     def test_not_json_input(self):
-        pass
+        with pytest.raises(ValueError):
+            tweet_geto.dump_pager_content_to_json(MagicMock(), Path("peko.peko"))

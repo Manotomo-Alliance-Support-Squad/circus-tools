@@ -38,7 +38,6 @@ class TestGetApiObjWithAuth:
 
 
 # TODO: Patch TwitterPager to figure out if query is sent as we expect
-# TODO: Patch TwitterAPI to figure out if the right auth informaion is pass through
 class TestRecentSearchPager:
 
     @patch('tools.tweet_geto.TwitterPager')
@@ -93,7 +92,8 @@ class TestRecentSearchPager:
         expected_api_request = deepcopy(field)
         expected_api_request['query'] = ''  # should match query below
 
-        tweet_geto.get_recent_search_pager(query='', fields=field)
+        tweet_geto.get_recent_search_pager(
+            query=expected_api_request['query'], fields=field)
 
         mock_pager.assert_called_with(
             mock_get_api(),
@@ -102,17 +102,27 @@ class TestRecentSearchPager:
             hydrate_type=HydrateType.APPEND,  # default
         )
 
-
     @patch('tools.tweet_geto.TwitterPager')
     @patch('tools.tweet_geto.get_api_obj_with_auth')
-    def test_falsey_query(self, mock_get_api, mock_pager):
-        pass
+    @pytest.mark.parametrize('query', [{'query': 'dict as query'}, ('tuple', 'as', 'query')])
+    def test_falsey_query(self, mock_get_api, mock_pager, query):
+        with pytest.raises(TypeError):
+            tweet_geto.get_recent_search_pager(query=query, fields={})
 
     @patch('tools.tweet_geto.TwitterPager')
     @patch('tools.tweet_geto.get_api_obj_with_auth')
     def test_truthy_query(self, mock_get_api, mock_pager):
-        pass
+        expected_api_request = {'query': "polka oruka"}  # should match query below
 
+        tweet_geto.get_recent_search_pager(
+            query=expected_api_request['query'], fields={})
+
+        mock_pager.assert_called_with(
+            mock_get_api(),
+            tweet_geto.RECENT_TWEETS_ENDPOINT,
+            expected_api_request,
+            hydrate_type=HydrateType.APPEND,  # default
+        )
 
 class TestDumpPagerContentToJson:
 

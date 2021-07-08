@@ -40,6 +40,9 @@ def get_recent_search_pager(
 ) -> TwitterPager:
     api = get_api_obj_with_auth(auth_filepath)
 
+    if not isinstance(query, str):
+        raise TypeError(f'query needs to be a str. Provided query is {query}')
+
     api_request = dict(**fields, **{'query': query})
     return TwitterPager(
         api,

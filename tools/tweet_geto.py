@@ -11,13 +11,14 @@ EXPANSIONS = 'author_id,attachments.media_keys'
 TWEET_FIELDS = 'created_at,attachments,author_id'
 MEDIA_FIELDS = 'media_key,preview_image_url,type,url'
 
+RECENT_TWEETS_ENDPOINT = 'tweets/search/recent'
 
 aqua_query = {
     # TODO: Add in a query limit for datetime
     'query': {'#Ganbareあくたん -is:retweet'},
-    'expansions': 'author_id,attachments.media_keys',
-    'tweet.fields': 'created_at,attachments,author_id',
-    'media.fields': 'media_key,preview_image_url,type,url'
+    'expansions': EXPANSIONS,
+    'tweet.fields': TWEET_FIELDS,
+    'media.fields': MEDIA_FIELDS,
 }
 
 
@@ -39,18 +40,18 @@ def get_recent_search_pager(
 ) -> TwitterPager:
     api = get_api_obj_with_auth(auth_filepath)
 
-    api_request = dict(**fields, **{"query": query})
+    api_request = dict(**fields, **{'query': query})
     return TwitterPager(
         api,
-        'tweets/search/recent',
+        RECENT_TWEETS_ENDPOINT,
         api_request,
-        hydrate_type=HydrateType.APPEND
+        hydrate_type=hydrate_type
     )
 
 
 def dump_pager_content_to_json(pager: TwitterPager, filepath: Path):
-    if filepath.suffix != ".json":
-        raise ValueError("Filetype should be a json file.")
+    if filepath.suffix != '.json':
+        raise ValueError('Filetype should be a json file.')
 
     all_pager_results = [result for result in pager.get_iterator()]
 
@@ -71,7 +72,7 @@ def append_pager_content_to_json(
         current_results = json.load(fp)
 
     if not no_bak_file:
-        bak_name = filepath.name + ".bak"
+        bak_name = filepath.name + '.bak'
         filepath.rename(filepath.parent.joinpath(bak_name))
 
     for result in pager.get_iterator():

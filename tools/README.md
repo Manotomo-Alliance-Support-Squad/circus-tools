@@ -14,7 +14,7 @@ access_token_key=ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
 access_token_secret=KUSAKUSAKUSAKUSAKUSAKUSAKUSAKUSA
 ```
 
-You can name this as `credentials.txt` in the folder you are running the functions from, or specify the file in your function call.
+You can name this as `credentials.txt` in the folder you are running the functions from, or specify the filepath in your function call.
 
 ## Getting a TweetPager for recent tweets
 

@@ -79,14 +79,13 @@ class TestTweetContext:
         assert test_context.get_tweet_media() == test_context.artworkLink
 
     @pytest.mark.parametrize(
-        'twitter_context, circus_context', [
-            ('id', 'tweet_id'),
-            ('name', 'display_name'),
-            ('text', 'message'),
-            ('username', 'username'),
+        'twitter_context, circus_context, manotomo_attribute', [
+            ('id', 'tweet_id', 'setID'),
+            ('name', 'display_name', 'username'),
+            ('text', 'message', 'message'),
         ]
     )
-    def test_get_string_contexts(self, twitter_context, circus_context):
+    def test_get_string_contexts(self, twitter_context, circus_context, manotomo_attribute):
         """Tests that simple text context loads properly.
         circus_context is the intermediate context defined in tweet_context.TWEET_CONTEXT_MAPPING, mapping a
         human readable key to the path to the appropraite value in the tweet data model.
@@ -100,3 +99,15 @@ class TestTweetContext:
 
         test_context_method = getattr(test_context, context_attribute)
         assert test_context_method() == f'{twitter_context} truthy_context'
+        assert getattr(test_context, manotomo_attribute) == f'{twitter_context} truthy_context'
+
+    def test_get_tweet_username(self):
+        """Not part of test_get_string_contexts because there's no matching manotomo_attribute
+        """
+        load_context = {
+            "username": 'username truthy_context'
+        }
+
+        test_context = tweet_context.TweetContext(load_context)
+
+        assert test_context.get_tweet_username() == 'username truthy_context'

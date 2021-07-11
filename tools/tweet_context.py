@@ -66,9 +66,14 @@ class TweetContext(object):
             return ''
         return f"https://twitter.com/{username}/status/{tweet_id}"
 
+    def get_tweet_username(self) -> str:
+        """Not the same as the manotomo username, manotomo uses the display name"""
+        return self.context.get('username')
+
     # Manotomo-vocab getters, matches db column names
     @property
     def username(self) -> str:
+        """Gets the displayed name, username for twitter is a different thing"""
         return self.get_tweet_name()
 
     @property

@@ -17,10 +17,12 @@ TWEET_CONTEXT_MAPPING = {
     'tweet_id': ['id'],
     'datetime': ['created_at']
 }
+MEDIA_PREVIEW_URL_KEY = 'preview_image_url'
+MEDIA_URL_KEY = 'url'
 
 
 class TweetContext(object):
-    """docstring for TweetContext"""
+    """Object that maps the tweet data model into a dataclass like object"""
 
     def __init__(self, context_dict: Dict):
         self.context = context_dict
@@ -28,7 +30,7 @@ class TweetContext(object):
     def __repr__(self):
         return pformat(self.context)
 
-    #  Tweet-vocab getters
+    #  Twitter-vocab getters
     def get_tweet_id(self) -> str:
         return self.context.get('tweet_id')
 
@@ -38,14 +40,16 @@ class TweetContext(object):
     def get_tweet_media(self) -> List:
         """There could be more than one piece of media"""
         medias = self.context.get('medias')
+
         if medias is None:
             return None
+
         media_urls = []
         for media in medias:
-            if 'preview_image_url' in media:
-                media_urls.append(media['preview_image_url'])
-            elif 'url' in media:
-                media_urls.append(media['url'])
+            if MEDIA_PREVIEW_URL_KEY in media:
+                media_urls.append(media[MEDIA_PREVIEW_URL_KEY])
+            elif MEDIA_URL_KEY in media:
+                media_urls.append(media[MEDIA_URL_KEY])
             else:
                 LOGGER.warning(f'Media did not have preview_image_url or url in its keys. Media: {pformat(media)}')
 
@@ -55,7 +59,12 @@ class TweetContext(object):
         return self.context.get('text')
 
     def get_tweet_url(self) -> str:
-        return f"https://twitter.com/{self.context.get('username')}/status/{self.context.get('tweet_id')}"
+        username = self.context.get('username')
+        tweet_id = self.context.get('tweet_id')
+        if not username or not tweet_id:
+            LOGGER.warning(f'Missing username or tweet id; username: {username}, tweet_id: {tweet_id}')
+            return ''
+        return f"https://twitter.com/{username}/status/{tweet_id}"
 
     # Manotomo-vocab getters, matches db column names
     @property
@@ -64,7 +73,7 @@ class TweetContext(object):
 
     @property
     def artworkLink(self) -> List:
-        """There could be more than one piece of media"""
+        """There could be more than one piece of media so this returns a List"""
         return self.get_tweet_media()
 
     @property

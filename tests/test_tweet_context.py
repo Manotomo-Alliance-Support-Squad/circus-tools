@@ -77,3 +77,26 @@ class TestTweetContext:
 
         assert test_context.get_tweet_media() == ['truthy_media_url1', 'truthy_media_preview_url1']
         assert test_context.get_tweet_media() == test_context.artworkLink
+
+    @pytest.mark.parametrize(
+        'twitter_context, circus_context', [
+            ('id', 'tweet_id'),
+            ('name', 'display_name'),
+            ('text', 'message'),
+            ('username', 'username'),
+        ]
+    )
+    def test_get_string_contexts(self, twitter_context, circus_context):
+        """Tests that simple text context loads properly.
+        circus_context is the intermediate context defined in tweet_context.TWEET_CONTEXT_MAPPING, mapping a
+        human readable key to the path to the appropraite value in the tweet data model.
+        """
+        load_context = {
+            circus_context: f'{twitter_context} truthy_context'
+        }
+        context_attribute = f'get_tweet_{twitter_context}'
+
+        test_context = tweet_context.TweetContext(load_context)
+
+        test_context_method = getattr(test_context, context_attribute)
+        assert test_context_method() == f'{twitter_context} truthy_context'

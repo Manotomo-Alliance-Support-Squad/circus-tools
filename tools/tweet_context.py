@@ -12,7 +12,7 @@ LOGGER = logging.getLogger(__name__)
 TWEET_CONTEXT_MAPPING = {
     'username': ['author_id_hydrate', 'username'],
     'display_name': ['author_id_hydrate', 'name'],
-    'text': ['text'],
+    'message': ['text'],
     'medias': ['attachments', 'media_keys_hydrate'],
     'tweet_id': ['id'],
     'datetime': ['created_at']
@@ -56,7 +56,7 @@ class TweetContext(object):
         return media_urls
 
     def get_tweet_text(self) -> str:
-        return self.context.get('text')
+        return self.context.get('message')
 
     def get_tweet_url(self) -> str:
         username = self.context.get('username')

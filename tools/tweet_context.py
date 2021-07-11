@@ -1,4 +1,4 @@
-"""Exposes tweet metadata without traversals the user needing to understand the twitter data model
+"""Exposes tweet metadata without the user needing to understand the twitter data model
 """
 
 import logging
